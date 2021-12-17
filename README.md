@@ -6,3 +6,12 @@ V primeru, da je P disk, je to tudi linearen program.
 Naša naloga je, da naredimo eksperimente, v katerih bomo poiskali največje možne kvadrate, diske, enakostranične trikotnike … , ki jih lahko preslikamo tako, da so znotraj danega konveksnega mnogokotnika. Eksperimente bomo reševali s pomočjo linearnega programiranja.
 Poleg tega bomo ločili primere, ko P lahko rotiramo; v tem primeru bomo ločili več različnih rotacij. Za reševanje problema bomo uporabljali programski jezik Sage
 
+Definicija: Konveksen poligon P je tak poligon, za katerega velja, da pri poljubni izbiri dveh točk p in q iz poligona P, daljica pq, ki povezuje omenjeni točki v
+celoti leži v poligonu P.
+
+1. Translacije:
+Translacije so preslikave oblike τ(~x) = ~x + ~a za nek ~a ∈ R. (~ označuje vektor)
+
+2. Rotacije:
+Rotacije so preslikave oblike τ (~x) = R_(φ)~x + ~a za nek φ ∈ (0, 2π) in ~a ∈ R. Takšna preslikava ustreza rotaciji za kot φ okoli točke v ravnini,
+ki je določena z enačbo τ (~x) = ~x. (~ označuje vektor)
