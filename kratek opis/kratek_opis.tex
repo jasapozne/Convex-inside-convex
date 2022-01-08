@@ -1,0 +1,104 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[slovene]{babel}
+
+\usepackage{amsthm}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{relsize}
+\usepackage{graphicx}
+\usepackage{etoolbox}
+\usepackage{setspace}
+\graphicspath{ {./Slike/} }
+\usepackage[
+top    = 3.cm,
+bottom = 3.cm,
+left   = 3.cm,
+right  = 3.cm]{geometry}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage{authblk}
+\usepackage{makecell}
+\usepackage[nottoc]{tocbibind}
+
+\newtheorem{definicija}{Definicija}
+\newtheorem{posledica}{Posledica}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        \textsc{\LARGE Univerza v Ljubljani}\\[0.5cm]
+        {\Large Fakulteta za matematiko in fiziko}\\[3cm]
+        {\large Finančni praktikum}\\[0.5cm]
+        {\huge Največja konveksna množica znotraj konveksne množice}\\[10.0cm]
+    \end{center}
+
+    \begin{minipage}{0.4\textwidth}
+		\begin{flushleft}
+			\large
+			\textit{Avtorja:}\\
+			Jure Sternad \\
+			Rok Rozman \\
+            Jaša Pozne
+		\end{flushleft}
+	\end{minipage}
+	~
+	\begin{minipage}{0.4\textwidth}
+		\begin{flushright}
+			\large
+			\textit{Mentorja:}\\
+			prof. dr. Sergio \textsc{Cabello} \\
+			doc. dr. Janoš \textsc{Vidali}
+		\end{flushright}
+	\end{minipage}
+	
+	\vfill\vfill\vfill 
+	\begin{center}
+	{\large{Ljubljana, \today}} 
+    \end{center}
+	\vfill 
+
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+
+\section{Navodilo}
+
+Če imamo podana konveksna mnogokotnika $P$ in $Q$ v koordinatni ravnini,
+ potem je problem odločanja ali se $P$ lahko preslika v $Q$ 
+ linearen program (izvedljivosti). 
+ Poleg tega je problem odločanja za koliko lahko $P$ največ povečamo,
+  da je lahko v $Q$ , tudi linearen program.
+   V primeru, da je $P$ disk, je to tudi linearen program.
+
+
+\section{Opis problema}
+\begin{definicija}
+    Konveksen poligon $P$ je tak poligon, za katerega velja, da pri poljubni izbiri dveh točk $p$ in $q$
+     iz poligona $P$, daljica $pq$, ki povezuje omenjeni točki v celoti leži v poligonu $P$.
+\end{definicija}
+
+\begin{definicija}
+    Translacije so preslikave oblike $\tau(\vec{x}) = \vec{x} + \vec{a}$ za nek $a \in \mathbb{R}$.
+\end{definicija}
+
+\begin{definicija}
+    Rotacije so preslikave oblike $\tau (\vec{x}) = R_{\phi}\vec{x} + \vec{a}$ za nek $\phi \in (0, 2\pi)$ in $\vec{a} \in \mathbb{R}$. 
+    Takšna preslikava ustreza rotaciji za kot $\phi$ okoli točke v ravnini, ki je določena z enačbo $\tau (\vec{x}) = x$. 
+\end{definicija}
+
+
+\section{Nadaljnji potek dela}
+
+Naša naloga je, da naredimo eksperimente, v katerih bomo
+ poiskali največje možne kvadrate, diske, enakostranične trikotnike … ,
+  ki jih lahko preslikamo tako, da so znotraj danega konveksnega
+   mnogokotnika. Eksperimente bomo reševali s pomočjo linearnega 
+   programiranja. Poleg tega bomo ločili primere, ko P lahko rotiramo;
+    v tem primeru bomo ločili več različnih rotacij. 
+Za reševanje problema bomo uporabljali programski jezik Sage.
+
+
+\end{document}
