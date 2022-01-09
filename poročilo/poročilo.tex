@@ -117,18 +117,16 @@ Tako je bil cilj naših eksperimentov najti tak že v naprej natančno določen 
 \\~\\
 Pri eksperimenitih na enakostraničnem trikotniku in kvadratu (brez rotacij), smo uporabili algoritem 
 \begin{lstlisting}[language=Python]
-    p = MixedIntegerLinearProgram(maximization=True) 
+    # Nastavimo p za linearen program v katerem iscemo najvecjo skalo.
+    p = MixedIntegerLinearProgram(maximization=True)
     p.set_objective(p['k'])
+    # Z dvema for zankama se sprehodimo po tockah zrcaljenega lika
+    # in polravninah lika v katerega zrcalimo.
     for xi, yi in tocke:
         for ai, bi, ci in zip(a, b, c):
-    p.add_constraint(ai * (p['k'] * xi + p['x']) + 
-    bi * (p['k'] * yi + p['y']) <= ci)
+            # Dodamo pogoj v p.
+            p.add_constraint(ai * (p['k'] * xi + p['x']) + bi * (p['k'] * yi + p['y']) <= ci)
     p.solve()
-
-    k = p.get_values(p['k']) 
-    x = p.get_values(p['x'])
-    y = p.get_values(p['y'])
-    k, x, y
 \end{lstlisting}
 
 ki za vhodne podatke prejme podatke v obliki $\vec{a} = [a_1,a_2,...,a_n]$ za a,b,c in krajišča likov $tocke = [(x_1,y_1),(x_2,y_2),...,(x_n,y_n)]$ 
@@ -136,25 +134,35 @@ ter vrne skalar $k$, ki predstavlja količino za koliko se bo lik povečal/zmanj
 \\~\\
 V primeru, ko smo pri eksperimentih upoštevali še rotacije smo uporabili sledeč algoritem.
 \begin{lstlisting}[language=Python]
+    # Nastavimo p za linearen program v katerem iscemo najvecjo skalo.
     p = MixedIntegerLinearProgram(maximization=True)
-
+    
+    # S kot in t belezimo najvecjo skalo in kot
+    # pri katerem se ta zgodi.
     kot = None
     t = 0
+    # Shranimo si stevilo tock in definiramo nov seznam tocke2.
     dolzina = len(tocke)
     tocke2=list(range(dolzina))
     
     p.set_objective(p['k'])
     
+    # S for zanko se sprehodimo po kotih od 1 do 360 stopinj.
     for j in range(1,360):
+        # Pri vsakem kotu si shranimo nova ogljisca zarotiranega lika
+        # v tocke2.
         for k in range(len(tocke)):
             xii = (cos(j*pi/180)*tocke[k][0]-sin(j*pi/180)*tocke[k][1])
             yii = (sin(j*pi/180)*tocke[k][0]+cos(j*pi/180)*tocke[k][1])
             tocke2[k] =[xii,yii]
+            # Za vsako tocko dodamo pogoje.
         for xi, yi in tocke2:
             for ai, bi, ci in zip(a, b, c):
-                p.add_constraint(ai * (p['k'] * xi + p['x']) + 
-                bi * (p['k'] * yi + p['y']) <= ci)
+                p.add_constraint(ai * (p['k'] * xi + p['x']) +
+                 bi * (p['k'] * yi + p['y']) <= ci)
         r = p.solve()
+        # Ce naletimo na vecjo skalo, si jo shranimo skupaj s kotom
+        # in ogljisci prezrcaljenega lika.
         if r > t:
             t = r
             kot = j
@@ -224,21 +232,30 @@ posledično pa algoritem, ki je
 deloval v primeru enakostraničnega trikotnika in kvadrata v tem primeru ne deluje. Ideja algoritma je krožnico razdeliti na $360$ točk ter potem za vsako
 preveriti ali ustreza predpisanemu linearnemu pogoju. 
 \begin{lstlisting}[language=Python]
-    p = MixedIntegerLinearProgram(maximization=True)
-    
-    p.set_objective(p['k'])
-    
-    x0,y0 = krog[0]
-    radij  = krog[1]
-    
-    tocke=[(0,0),radij]
-    for j in range(1,360):
-        xi = tocke[1]*cos(j*pi/180)
-        yi = tocke[1]*sin(j*pi/180)
-        for ai, bi, ci in zip(a, b, c):
-            p.add_constraint(ai * (p['k'] * xi + p['x']) + 
-            bi * (p['k'] * yi + p['y']) <= ci)
-    p.solve()
+# krog = [sredisce,radij]
+
+# Nastavimo p za linearni program.
+p = MixedIntegerLinearProgram(maximization=True)
+p.set_objective(p['k'])
+
+# Z x0 in y0 oznacimo sredisce kroga.
+x0,y0 = krog[0]
+radij  = krog[1]
+# Sredisce kroga postavimo v koordinatno izhodisce in nato tocko,
+# ki je na poziciji (sredisce,0) zarotiramo za
+# 360 stopinj okoli izhodisca,
+# za vsako stopinjo posebej.
+# Na ta nacin dobimo dober priblizek za krog.
+tocke=[(0,0),radij]
+for j in range(1,360):
+    xi = tocke[1]*cos(j*pi/180)
+    yi = tocke[1]*sin(j*pi/180)
+    # Pri vsaki rotaciji tocke dodamo v linearni program pogoj,
+    # ki vkljucuje to tocko.
+    for ai, bi, ci in zip(a, b, c):
+        p.add_constraint(ai * (p['k'] * xi + p['x']) + 
+        bi * (p['k'] * yi + p['y']) <= ci)
+p.solve()
     
 
     k, x, y = p.get_values(p['k']), p.get_values(p['x']),
