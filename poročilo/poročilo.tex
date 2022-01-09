@@ -125,7 +125,8 @@ Pri eksperimenitih na enakostraničnem trikotniku in kvadratu (brez rotacij), sm
     for xi, yi in tocke:
         for ai, bi, ci in zip(a, b, c):
             # Dodamo pogoj v p.
-            p.add_constraint(ai * (p['k'] * xi + p['x']) + bi * (p['k'] * yi + p['y']) <= ci)
+            p.add_constraint(ai * (p['k'] * xi + p['x']) + 
+            bi * (p['k'] * yi + p['y']) <= ci)
     p.solve()
 \end{lstlisting}
 
@@ -149,7 +150,7 @@ V primeru, ko smo pri eksperimentih upoštevali še rotacije smo uporabili slede
     
     # S for zanko se sprehodimo po kotih od 1 do 360 stopinj.
     for j in range(1,360):
-        # Pri vsakem kotu si shranimo nova ogljisca zarotiranega lika
+        # Pri vsakem kotu si shranimo nova oglisca zarotiranega lika
         # v tocke2.
         for k in range(len(tocke)):
             xii = (cos(j*pi/180)*tocke[k][0]-sin(j*pi/180)*tocke[k][1])
@@ -162,7 +163,7 @@ V primeru, ko smo pri eksperimentih upoštevali še rotacije smo uporabili slede
                  bi * (p['k'] * yi + p['y']) <= ci)
         r = p.solve()
         # Ce naletimo na vecjo skalo, si jo shranimo skupaj s kotom
-        # in ogljisci prezrcaljenega lika.
+        # in oglisci prezrcaljenega lika.
         if r > t:
             t = r
             kot = j
@@ -182,7 +183,7 @@ Ta poleg vseh že omenjenih lastnosti prvega algoritma hkrati upošteva še vse 
 Prvi eksperiment smo opravili za enakostranični trikotnik brez rotacij. Tako potrebne pogoje kot točke smo si izmislili.
 \newline
 
-Algoritem je poiskal največji možen trikotnik znotraj konveksne množice $Q$ tako, da je vsa tri ogljišča enakostraničnega trikotnika preslikal v $Q$ za $(x,y)$,
+Algoritem je poiskal največji možen trikotnik znotraj konveksne množice $Q$ tako, da je vsa tri oglišča enakostraničnega trikotnika preslikal v $Q$ za $(x,y)$,
 pri tem pa celoten lik povečal/zmanjšal za skalar $k$.
 \\~\\
 Vhodni podatki prvega eksperimenta so bili $\vec{a}=[-8,9,-4,-3,5]$, $\vec{b}=[1,2,-7,5,-9]$, $\vec{c}=[13,23,20,13,15]$ in $tocke = [(10.4,8.6),(10.6,8),(11.1019615,8.4732052)]$.
@@ -270,8 +271,5 @@ Vhodni podatki petega in tako zadnjega eksperimenta so bili $\vec{a}=[-8,9,-4,-3
 \begin{center}
     \includegraphics[scale=0.7]{vizualizacije/krog.png}\\
 \end{center}
-\subsection{Čas izvajanja algoritmov}
-%povečanje časa izvajanja
-\newpage
-\section{Zaključek}
+
 \end{document}
