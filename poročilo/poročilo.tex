@@ -102,14 +102,43 @@ Za lažje razumevanje so spodaj navedene še definicije.
 \end{definicija}
 
 
-\section{Definiranje konveksne množice Q}
+\section{Definiranje problema s pomočjo linearnega programiranja}
 Projekta smo se lotili tako, da smo najprej s pomočjo linearnega programiranja definirali konveksno množico $Q$ s predpisom
 \begin{align*}
     a_i x + b_i y \le c_i \\
     i = 1, ..., n \\
 \end{align*}
 $n$ predstavlja število pogojev s katerimi definiramo množico $Q$.
+\newline
+Nato smo definirali še množico $P$
+\begin{align*}
+{(x_j,y_j);j=1,2,...,m}
+\end{align*}
+
 \newpage
+Če je bil $P$ mnogokotnik se je linearni program nadaljeval
+ na sledeč način \\
+\underline{Cilj:} Maksimizacija k \\
+pri pogojih: 
+\begin{align*}
+    a_i (k x_j + x) + b_i(k  y_i + y) \le c_i \\
+    i = 1, ..., n \\
+    j = 1, ..., m \\
+\end{align*}
+oglišča novega lika:
+\begin{align*}
+(x_jk+x,y_jk+y) \\
+j = 1, ..., m \\
+\end{align*}
+Sicer pa \\
+\underline{Cilj:} Maksimizacija r \\
+pri pogojih: 
+\begin{align*}
+    r \sqrt{a_i^2 + b_i^2} \le c_i - a_i x - b_i y \\
+    i = 1, ..., n \\
+    r > 0 \\
+\end{align*}
+kjer ima krog središče v $(x,y)$ in radij $r$.
 \section{Eksperimenti}
 Kot navodilo zahteva, smo izvedeli eksperimente za tri like - krog, enakostraničen trikotnik in kvadrat. Pri slednjih smo upoštevali možnost rotacije likov.
 \newline
@@ -122,12 +151,16 @@ Pri eksperimenitih na enakostraničnem trikotniku in kvadratu (brez rotacij), sm
     p.set_objective(p['k'])
     # Z dvema for zankama se sprehodimo po tockah zrcaljenega lika
     # in polravninah lika v katerega zrcalimo.
-    for xi, yi in tocke:
+    for xj, yj in tocke:
         for ai, bi, ci in zip(a, b, c):
             # Dodamo pogoj v p.
-            p.add_constraint(ai * (p['k'] * xi + p['x']) + 
-            bi * (p['k'] * yi + p['y']) <= ci)
+            p.add_constraint(ai * (p['k'] * xj + p['x']) +
+             bi * (p['k'] * yj + p['y']) <= ci)
     p.solve()
+
+    k, x, y = p.get_values(p['k']), p.get_values(p['x']),
+    p.get_values(p['y'])
+    k, x, y    
 \end{lstlisting}
 
 ki za vhodne podatke prejme podatke v obliki $\vec{a} = [a_1,a_2,...,a_n]$ za a,b,c in krajišča likov $tocke = [(x_1,y_1),(x_2,y_2),...,(x_n,y_n)]$ 
@@ -150,24 +183,24 @@ V primeru, ko smo pri eksperimentih upoštevali še rotacije smo uporabili slede
     
     # S for zanko se sprehodimo po kotih od 1 do 360 stopinj.
     for j in range(1,360):
-        # Pri vsakem kotu si shranimo nova oglisca zarotiranega lika
-        # v tocke2.
+        # Pri vsakem kotu si shranimo nova oglisca zarotiranega
+        # lika v tocke2.
         for k in range(len(tocke)):
             xii = (cos(j*pi/180)*tocke[k][0]-sin(j*pi/180)*tocke[k][1])
             yii = (sin(j*pi/180)*tocke[k][0]+cos(j*pi/180)*tocke[k][1])
             tocke2[k] =[xii,yii]
             # Za vsako tocko dodamo pogoje.
-        for xi, yi in tocke2:
+        for xj, yj in tocke2:
             for ai, bi, ci in zip(a, b, c):
-                p.add_constraint(ai * (p['k'] * xi + p['x']) +
-                 bi * (p['k'] * yi + p['y']) <= ci)
+                p.add_constraint(ai * (p['k'] * xj + p['x']) +
+                bi * (p['k'] * yj + p['y']) <= ci)
         r = p.solve()
         # Ce naletimo na vecjo skalo, si jo shranimo skupaj s kotom
         # in oglisci prezrcaljenega lika.
         if r > t:
             t = r
             kot = j
-            k, x, y = p.get_values(p['k']), p.get_values(p['x']), 
+            k, x, y = p.get_values(p['k']), p.get_values(p['x']),
             p.get_values(p['y'])
             nove_tocke=[]
             for tocka in tocke2:
@@ -217,8 +250,9 @@ Vhodni podatki četrtega eksperimenta pa $\vec{a}=[-8,9,-4,-3,5]$, $\vec{b}=[1,2
 \end{center}
 
 \subsubsection{Primerjava eksperimentov brez in z rotacijami}
-Če ponovimo oba eksperimenta z istimi vhodnimi podatki hitro opazimo pričakovano vidno razliko med ploščinama likov.
-Tako lahko logično sklepamo, da je metoda z rotacijami učinkovitejša. 
+Ob ponovitvi eksperimenta z istimi vhodnimi podatki smo hitro opazili pričakovano vidno razliko med ploščinama likov. Lik, ki ga je bilo možno
+rotirati, je namreč imel večjo ploščino.
+Tako smo lahko logično sklepali, da je metoda z rotacijami učinkovitejša. 
 \begin{center}
     \includegraphics[scale=0.7]{vizualizacije/primerjava_trikotnikov.png}\\
 \end{center}
@@ -230,42 +264,25 @@ Tako lahko logično sklepamo, da je metoda z rotacijami učinkovitejša.
 \subsection{Krog}
 Za eksperiment s krogom smo potrebovali nov algoritem, saj ima krog neskončno število točk, ki jih je potrebno preverit,
 posledično pa algoritem, ki je 
-deloval v primeru enakostraničnega trikotnika in kvadrata v tem primeru ne deluje. Ideja algoritma je krožnico razdeliti na $360$ točk ter potem za vsako
-preveriti ali ustreza predpisanemu linearnemu pogoju. 
+deloval v primeru enakostraničnega trikotnika in kvadrata v tem primeru ne deluje. 
 \begin{lstlisting}[language=Python]
-# krog = [sredisce,radij]
-
-# Nastavimo p za linearni program.
-p = MixedIntegerLinearProgram(maximization=True)
-p.set_objective(p['k'])
-
-# Z x0 in y0 oznacimo sredisce kroga.
-x0,y0 = krog[0]
-radij  = krog[1]
-# Sredisce kroga postavimo v koordinatno izhodisce in nato tocko,
-# ki je na poziciji (sredisce,0) zarotiramo za
-# 360 stopinj okoli izhodisca,
-# za vsako stopinjo posebej.
-# Na ta nacin dobimo dober priblizek za krog.
-tocke=[(0,0),radij]
-for j in range(1,360):
-    xi = tocke[1]*cos(j*pi/180)
-    yi = tocke[1]*sin(j*pi/180)
-    # Pri vsaki rotaciji tocke dodamo v linearni program pogoj,
-    # ki vkljucuje to tocko.
+    # Nastavimo p za linearni program in definiramo spremenljivko k.
+    p = MixedIntegerLinearProgram(maximization=True)
+    k = p.new_variable(real=True)
+    # Z r, x, y oznacimo polmer ter koordinati sredisca.
+    r, x, y = (k[i] for i in "rxy")
+    # Maksimiziramo r
+    p.set_objective(r)
+    # Dodamo pogoj, da je polmer nenegativen.
+    p.add_constraint(r >= 0)
+    # S for zanko se sprehodimo po polravninah 
+    # lika ter za vsako dodamo pogoj.
     for ai, bi, ci in zip(a, b, c):
-        p.add_constraint(ai * (p['k'] * xi + p['x']) + 
-        bi * (p['k'] * yi + p['y']) <= ci)
-p.solve()
-    
+        p.add_constraint(r * sqrt(ai^2 + bi^2) <= ci -ai*x-bi*y)
+    p.solve()
 
-    k, x, y = p.get_values(p['k']), p.get_values(p['x']),
-     p.get_values(p['y'])
-    nov_radij = radij * k
-    premik_sredisca = (x-x0,y-y0)
-    novo_sredisce = (x,y)
-    print(k,novo_sredisce, nov_radij)
-    
+    res = p.get_values(k)
+    res
 \end{lstlisting}
 Vhodni podatki petega in tako zadnjega eksperimenta so bili $\vec{a}=[-8,9,-4,-3,5]$, $\vec{b}=[1,2,-7,5,-9]$, $\vec{c}=[13,23,20,13,15]$ in $krog=[(7,7),3]$.
 \begin{center}
